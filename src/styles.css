@@ -275,6 +275,7 @@
   --cloud: oklch(0.99 0.005 90);
   --room-shade: 0;
   --beam: 0.5;
+  --shade: oklch(0.16 0.04 265);
 }
 .scene[data-daypart="morning"] {
   --sky-top: oklch(0.8 0.07 240);

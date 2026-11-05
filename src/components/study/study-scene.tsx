@@ -370,7 +370,7 @@ export function StudyScene() {
         </g>
 
         {/* evening / night shade */}
-        <rect width="800" height="520" pointerEvents="none" style={{ fill: "var(--shade, oklch(0.16 0.04 265))", opacity: "var(--room-shade)" as unknown as number }} />
+        <rect width="800" height="520" pointerEvents="none" style={{ fill: "var(--shade)", opacity: "var(--room-shade)" as unknown as number }} />
 
         {/* glows (drawn above the shade) */}
         {lampOn && (
