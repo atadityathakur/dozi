@@ -33,6 +33,11 @@ export const audioController = {
     return engine.supported;
   },
 
+  /** Create/resume the audio context from a user gesture. */
+  unlock() {
+    engine.ensure();
+  },
+
   play() {
     const { audio } = getState();
     if (!engine.ensure()) return;

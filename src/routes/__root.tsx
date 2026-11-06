@@ -12,6 +12,10 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AppRuntime, THEME_BOOT_SCRIPT } from "@/components/app-runtime";
+import { MiniPlayer } from "@/components/audio/mini-player";
+import { SiteNav } from "@/components/site-nav";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -78,21 +82,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Dozi — a cozy study room with a cat" },
+      { name: "description", content: "Study with Dozi: a cozy focus timer, lo-fi music, ambient sounds and a little cat who studies with you." },
+      { name: "author", content: "Dozi" },
+      { name: "theme-color", content: "#F5F0E8" },
+      { property: "og:title", content: "Dozi — a cozy study room with a cat" },
+      { property: "og:description", content: "A cozy focus timer, lo-fi music, ambient sounds and a little study cat." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,600;6..12,700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -103,8 +113,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="cafe" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -121,7 +132,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AppRuntime />
+      <div className="flex min-h-screen flex-col">
+        <SiteNav />
+        <div className="flex-1">
+          <Outlet />
+        </div>
+        <footer className="mx-auto w-full max-w-7xl px-4 py-8 text-center text-xs text-muted-foreground sm:px-6">
+          Dozi · made for quiet, steady study days. Everything stays on this device.
+        </footer>
+      </div>
+      <MiniPlayer />
+      <Toaster position="bottom-center" />
     </QueryClientProvider>
   );
 }
