@@ -87,8 +87,8 @@ export function TimerPanel() {
   const mainLabel = running ? "Pause" : timer.status === "paused" ? "Resume" : "Start";
 
   const onMain = () => {
-    // Audio needs a user gesture to unlock — use this click to prepare chimes.
-    if (!running && settings.soundNotifications) audioController.supported() && void 0;
+    // Use this click (a user gesture) to unlock audio so the completion chime can play later.
+    if (!running && settings.soundNotifications) audioController.unlock();
     timerActions.toggle();
   };
 
