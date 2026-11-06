@@ -61,7 +61,7 @@ export function longestStreak(sessions: StudySession[]): number {
   let run = 0;
   let prev: number | null = null;
   for (const k of days) {
-    const [y, m, d] = k.split("-").map(Number);
+    const [y = 0, m = 1, d = 1] = k.split("-").map(Number);
     const ts = new Date(y, m - 1, d).getTime();
     run = prev != null && dayKey(addDays(prev, 1)) === k ? run + 1 : 1;
     best = Math.max(best, run);
@@ -98,7 +98,7 @@ export function mostProductiveWeekday(sessions: StudySession[]): { day: string; 
   for (const s of sessions) totals[new Date(s.end).getDay()] += s.minutes;
   let best = 0;
   for (let i = 1; i < 7; i++) if (totals[i] > totals[best]) best = i;
-  return { day: WEEKDAYS[best], minutes: totals[best] };
+  return { day: WEEKDAYS[best] ?? "", minutes: totals[best] ?? 0 };
 }
 
 export function bySubject(sessions: StudySession[], subjects: Subject[]) {

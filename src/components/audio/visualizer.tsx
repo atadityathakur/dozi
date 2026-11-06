@@ -23,7 +23,7 @@ export function Visualizer({ active, bars = 18, className }: { active: boolean; 
         analyser.getByteFrequencyData(data);
         nodes.forEach((n, i) => {
           const idx = Math.min(data.length - 1, Math.floor(1 + (i / nodes.length) ** 1.4 * 40));
-          const v = data[idx] / 255;
+          const v = (data[idx] ?? 0) / 255;
           n.style.transform = `scaleY(${Math.max(0.12, v * 1.15)})`;
         });
       }

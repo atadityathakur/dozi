@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Pause, Play, Sparkles } from "lucide-react";
 
-import { LAYER_ICONS } from "@/components/audio/layer-icon";
+import { layerIcon } from "@/components/audio/layer-icon";
 import { TrackControls, VolumeRow } from "@/components/audio/music-player";
 import { Visualizer } from "@/components/audio/visualizer";
 import { PageHeader } from "@/components/page-header";
@@ -156,7 +156,7 @@ function SoundsPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   {LAYERS.filter((l) => l.group === group).map((l) => {
                     const pref = audio.layers[l.id] ?? { on: false, volume: 0.6 };
-                    const Icon = LAYER_ICONS[l.id];
+                    const Icon = layerIcon(l.id);
                     const live = pref.on && ambiencePlaying;
                     return (
                       <div
@@ -183,7 +183,7 @@ function SoundsPage() {
                           value={[Math.round(pref.volume * 100)]}
                           max={100}
                           step={1}
-                          onValueChange={([v]) => audioController.setLayer(l.id, { volume: v / 100 })}
+                          onValueChange={([v]) => audioController.setLayer(l.id, { volume: (v ?? 0) / 100 })}
                           aria-label={`${l.name} volume`}
                         />
                       </div>

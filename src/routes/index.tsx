@@ -34,7 +34,7 @@ function SceneCaption() {
   const now = useNow(1000);
   const clock24 = useApp((s) => s.settings.clock24h);
   const name = useApp((s) => s.settings.companionName);
-  const rain = useApp((s) => s.runtime.ambiencePlaying && !!s.audio.layers.rain?.on);
+  const rain = useApp((s) => s.runtime.ambiencePlaying && !!s.audio.layers["rain"]?.on);
   const daypart = getDaypart(now);
   const meta = DAYPART_META[daypart];
   const Icon = rain ? CloudRain : meta.icon;

@@ -8,7 +8,7 @@ import { LAYERS, MUSIC_CATEGORIES, TRACKS, getTrack } from "@/lib/audio/catalog"
 import { cn } from "@/lib/utils";
 import { useApp } from "@/state/app-store";
 
-import { LAYER_ICONS } from "./layer-icon";
+import { layerIcon } from "./layer-icon";
 import { Visualizer } from "./visualizer";
 
 export function TrackControls({ size = "md" }: { size?: "md" | "lg" }) {
@@ -73,7 +73,7 @@ export function VolumeRow({
         value={[muted ? 0 : Math.round(value * 100)]}
         max={100}
         step={1}
-        onValueChange={([v]) => onChange(v / 100)}
+        onValueChange={([v]) => onChange((v ?? 0) / 100)}
         aria-label={`${label} volume`}
       />
     </div>
@@ -155,7 +155,7 @@ export function MusicPlayer() {
         </div>
         <div className="grid grid-cols-4 gap-2">
           {LAYERS.slice(0, 8).map((l) => {
-            const Icon = LAYER_ICONS[l.id];
+            const Icon = layerIcon(l.id);
             const on = !!audio.layers[l.id]?.on;
             const live = on && ambiencePlaying;
             return (

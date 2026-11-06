@@ -174,7 +174,7 @@ class AudioEngine {
       const bar = Math.floor(i / 8);
       const pos = i % 8;
       const chordBars = def.style === "pad" ? 2 : 1;
-      const chord = def.chords[Math.floor(bar / chordBars) % def.chords.length];
+      const chord = (def.chords[Math.floor(bar / chordBars) % def.chords.length] ?? [48, 52, 55, 59]) as [number, number, number, number, ...number[]];
       const barLen = eighth * 8 * chordBars;
 
       if (def.style === "lofi") {
@@ -190,7 +190,7 @@ class AudioEngine {
           this.hat(dest, t, (pos % 2 === 0 ? 0.07 : 0.04) * def.drums);
         }
         if (Math.random() < 0.22) {
-          const n = chord[Math.floor(Math.random() * chord.length)] + 12;
+          const n = (chord[Math.floor(Math.random() * chord.length)] ?? chord[0]) + 12;
           this.piano(dest, mtof(n), t, beat * 2, 0.06);
         }
       } else if (def.style === "piano") {
@@ -200,13 +200,13 @@ class AudioEngine {
         }
         if (pos === 4 && Math.random() < 0.6) this.piano(dest, mtof(chord[2]), t, barLen / 2, 0.07);
         if (Math.random() < 0.3) {
-          const n = chord[Math.floor(Math.random() * chord.length)] + 12 + (Math.random() < 0.3 ? 12 : 0);
+          const n = (chord[Math.floor(Math.random() * chord.length)] ?? chord[0]) + 12 + (Math.random() < 0.3 ? 12 : 0);
           this.piano(dest, mtof(n), t + rand(0, 0.04), beat * 3, 0.06);
         }
       } else if (def.style === "pluck") {
         if (pos === 0) chord.forEach((n) => this.pad(dest, mtof(n), t, barLen, 0.028));
         const arp = [0, 1, 2, 3, 2, 1, 2, 3];
-        const n = chord[arp[pos] % chord.length] + 12;
+        const n = (chord[(arp[pos] ?? 0) % chord.length] ?? chord[0]) + 12;
         this.pluck(dest, mtof(n), t, beat * 1.5, pos === 0 ? 0.09 : 0.06);
         if (pos === 0) this.bass(dest, mtof(chord[0] - 12), t, barLen * 0.8, 0.12);
       } else {
@@ -215,7 +215,7 @@ class AudioEngine {
           this.pad(dest, mtof(chord[0] - 12), t, barLen * 1.05, 0.05);
         }
         if (Math.random() < 0.06) {
-          const n = chord[Math.floor(Math.random() * chord.length)] + 24;
+          const n = (chord[Math.floor(Math.random() * chord.length)] ?? chord[0]) + 24;
           this.piano(dest, mtof(n), t, beat * 4, 0.035);
         }
       }
