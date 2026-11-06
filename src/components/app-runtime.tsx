@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { audioController } from "@/lib/audio/controller";
 import { ACHIEVEMENTS } from "@/lib/achievements";
+import { DARK_THEMES } from "@/lib/defaults";
 import { formatClock, getRemaining } from "@/lib/timer";
 import { appActions, getState, hydrate, onAppEvent, timerActions, useApp } from "@/state/app-store";
 
@@ -34,7 +35,7 @@ export function AppRuntime() {
     const root = document.documentElement;
     root.dataset["theme"] = theme;
     root.dataset["motion"] = reduced ? "reduced" : "full";
-    root.style.colorScheme = theme === "midnight" ? "dark" : "light";
+    root.style.colorScheme = DARK_THEMES.includes(theme) ? "dark" : "light";
   }, [theme, reduced]);
 
   // Single ticker — timestamp based, so throttled background tabs stay accurate.
@@ -99,4 +100,4 @@ export function AppRuntime() {
 }
 
 /** Runs before paint so returning visitors don't see a theme flash. */
-export const THEME_BOOT_SCRIPT = `(function(){try{var s=JSON.parse(localStorage.getItem('dozi:v1:settings')||'{}');var d=document.documentElement;d.dataset.theme=s.theme||'cafe';if(s.reducedMotion)d.dataset.motion='reduced';}catch(e){}})();`;
+export const THEME_BOOT_SCRIPT = `(function(){try{var s=JSON.parse(localStorage.getItem('dozi:v1:settings')||'{}');var d=document.documentElement;var v=s.prefsVersion||1;d.dataset.theme=(v<2||!s.theme)?'midnight-library':s.theme;if(s.reducedMotion)d.dataset.motion='reduced';}catch(e){}})();`;

@@ -39,6 +39,9 @@ export const SUBJECT_COLORS = [
   "var(--muted-foreground)",
 ];
 
+/** Bump to re-apply the default theme + cat coat once for returning visitors. */
+export const PREFS_VERSION = 2;
+
 export const DEFAULT_SETTINGS: Settings = {
   defaultMode: "pomodoro",
   customFocusMin: 40,
@@ -52,11 +55,12 @@ export const DEFAULT_SETTINGS: Settings = {
   ambientAnimations: true,
   animations: { rain: true, clouds: true, lamp: true, steam: true, plant: true, dust: true, lights: true },
   clock24h: false,
-  theme: "cafe",
+  theme: "midnight-library",
   dailyGoalMinutes: 180,
   dailyGoalSessions: 6,
   companionName: "Mochi",
-  companionCoat: "ginger",
+  companionCoat: "snow",
+  prefsVersion: PREFS_VERSION,
 };
 
 export const DEFAULT_PROGRESS: Progress = { points: 0, achievements: {}, goalBonusDays: [] };
@@ -69,16 +73,18 @@ export const DEFAULT_AUDIO: AudioPrefs = {
   ambienceVolume: 0.7,
   ambienceMuted: false,
   repeat: true,
-  layers: {},
+  layers: { rain: { on: true, volume: 0.6 } },
 };
 
 export const THEMES: { id: ThemeId; name: string; blurb: string; swatch: string[] }[] = [
+  { id: "midnight-library", name: "Midnight Library", blurb: "Deep green shelves, night sky and rain on the glass", swatch: ["#13201F", "#1E3B36", "#E6B866", "#8FB3C9"] },
   { id: "cafe", name: "Cozy Café", blurb: "Warm cream, brown and terracotta", swatch: ["#F5F0E8", "#263A32", "#C98267", "#E6C77A"] },
   { id: "library", name: "Rainy Library", blurb: "Deep green, charcoal and muted blue", swatch: ["#DCE3DE", "#1F3A33", "#6E8CA6", "#2B3033"] },
   { id: "midnight", name: "Midnight Study", blurb: "Dark navy, lamp light and gold", swatch: ["#111829", "#1B2440", "#E8B86A", "#D98E5F"] },
 ];
 
 export const COATS: { id: CoatId; name: string }[] = [
+  { id: "snow", name: "Snowball white" },
   { id: "ginger", name: "Ginger" },
   { id: "grey", name: "Smoky grey" },
   { id: "midnight", name: "Midnight black" },
@@ -87,3 +93,8 @@ export const COATS: { id: CoatId; name: string }[] = [
 
 /** Bonus points for hitting the daily focus goal (once per day). */
 export const DAILY_GOAL_BONUS = 50;
+
+/** Themes where it is always raining outside the window. */
+export const RAINY_THEMES: ThemeId[] = ["midnight-library", "library"];
+/** Dark themes (lamp always on, dark colour scheme). */
+export const DARK_THEMES: ThemeId[] = ["midnight-library", "midnight"];

@@ -10,12 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as SessionsRouteImport } from './routes/sessions'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SoundsRouteImport } from './routes/sounds'
 import { Route as StatsRouteImport } from './routes/stats'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionsRoute = SessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SoundsRoute = SoundsRouteImport.update({
@@ -31,30 +49,49 @@ const StatsRoute = StatsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/sessions': typeof SessionsRoute
+  '/settings': typeof SettingsRoute
   '/sounds': typeof SoundsRoute
   '/stats': typeof StatsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/sessions': typeof SessionsRoute
+  '/settings': typeof SettingsRoute
   '/sounds': typeof SoundsRoute
   '/stats': typeof StatsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/sessions': typeof SessionsRoute
+  '/settings': typeof SettingsRoute
   '/sounds': typeof SoundsRoute
   '/stats': typeof StatsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sounds' | '/stats'
+  fullPaths: '/' | '/about' | '/sessions' | '/settings' | '/sounds' | '/stats'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sounds' | '/stats'
-  id: '__root__' | '/' | '/sounds' | '/stats'
+  to: '/' | '/about' | '/sessions' | '/settings' | '/sounds' | '/stats'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/sessions'
+    | '/settings'
+    | '/sounds'
+    | '/stats'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  SessionsRoute: typeof SessionsRoute
+  SettingsRoute: typeof SettingsRoute
   SoundsRoute: typeof SoundsRoute
   StatsRoute: typeof StatsRoute
 }
@@ -66,6 +103,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sessions': {
+      id: '/sessions'
+      path: '/sessions'
+      fullPath: '/sessions'
+      preLoaderRoute: typeof SessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sounds': {
@@ -87,6 +145,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  SessionsRoute: SessionsRoute,
+  SettingsRoute: SettingsRoute,
   SoundsRoute: SoundsRoute,
   StatsRoute: StatsRoute,
 }

@@ -12,6 +12,7 @@ import {
   DEFAULT_PROGRESS,
   DEFAULT_SETTINGS,
   DEFAULT_SUBJECTS,
+  PREFS_VERSION,
   SUBJECT_COLORS,
   getMode,
 } from "@/lib/defaults";
@@ -137,9 +138,13 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
   for (const key of PERSISTED) loaded[key] = adapter.load(key);
 
   const settingsRaw = (loaded.settings ?? {}) as Partial<Settings>;
+  const outdated = loaded.settings != null && (settingsRaw.prefsVersion ?? 1) < PREFS_VERSION;
   const settings: Settings = {
     ...DEFAULT_SETTINGS,
     ...settingsRaw,
+    ...(outdated
+      ? { theme: DEFAULT_SETTINGS.theme, companionCoat: DEFAULT_SETTINGS.companionCoat, prefsVersion: PREFS_VERSION }
+      : {}),
     animations: { ...DEFAULT_SETTINGS.animations, ...(settingsRaw.animations ?? {}) },
   };
   const audioRaw = (loaded.audio ?? {}) as Partial<AudioPrefs>;
@@ -155,7 +160,7 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
       : DEFAULT_SUBJECTS,
     study: { subjectId: null, task: "", ...((loaded.study as StudyContext | null) ?? {}) },
     progress: { ...DEFAULT_PROGRESS, ...((loaded.progress as Progress | null) ?? {}) },
-    audio: { ...DEFAULT_AUDIO, ...audioRaw, layers: { ...(audioRaw.layers ?? {}) } },
+    audio: { ...DEFAULT_AUDIO, ...audioRaw, layers: { ...DEFAULT_AUDIO.layers, ...(audioRaw.layers ?? {}) } },
     runtime: { ...state.runtime, lastInteraction: Date.now() },
     hydrated: true,
   };

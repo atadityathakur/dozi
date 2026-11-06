@@ -1,8 +1,8 @@
 export type ModeId = "pomodoro" | "deep" | "long" | "custom";
 export type Phase = "focus" | "break";
 export type TimerStatus = "idle" | "running" | "paused";
-export type ThemeId = "cafe" | "library" | "midnight";
-export type CoatId = "ginger" | "grey" | "midnight" | "cream";
+export type ThemeId = "midnight-library" | "cafe" | "library" | "midnight";
+export type CoatId = "snow" | "ginger" | "grey" | "midnight" | "cream";
 
 export interface TimerMode {
   id: ModeId;
@@ -70,6 +70,8 @@ export interface Settings {
   dailyGoalSessions: number;
   companionName: string;
   companionCoat: CoatId;
+  /** Bumped when new defaults should be applied once to returning visitors. */
+  prefsVersion?: number;
 }
 
 export interface AmbienceLayerPref {

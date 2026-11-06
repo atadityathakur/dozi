@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { getDaypart, useNow } from "@/hooks/use-now";
 import { useCompanion } from "@/hooks/use-companion";
+import { DARK_THEMES, RAINY_THEMES } from "@/lib/defaults";
 import { appActions, useApp } from "@/state/app-store";
 
 import { CatCompanion } from "./cat-companion";
@@ -78,14 +79,14 @@ export function StudyScene() {
 
   const daypart = getDaypart(now);
   const raining =
-    (ambiencePlaying && !!layers["rain"]?.on) || (musicPlaying && trackId === "rainy-day") || theme === "library";
+    (ambiencePlaying && !!layers["rain"]?.on) || (musicPlaying && trackId === "rainy-day") || RAINY_THEMES.includes(theme);
   const anim = settings.ambientAnimations ? settings.animations : null;
   const lampOn =
     daypart === "night" ||
     daypart === "evening" ||
-    theme === "midnight" ||
+    DARK_THEMES.includes(theme) ||
     (raining && timerStatus === "running" && timerPhase === "focus");
-  const nightish = daypart === "night" || daypart === "evening";
+  const nightish = daypart === "night" || daypart === "evening" || theme === "midnight-library";
 
   const date = now ? new Date(now) : null;
   const hourAngle = date ? ((date.getHours() % 12) + date.getMinutes() / 60) * 30 : 300;
@@ -364,7 +365,7 @@ export function StudyScene() {
             state={state}
             coat={settings.companionCoat}
             petting={petting}
-            onPet={() => appActions.pet()}
+            onPet={appActions.pet}
             label={`Pet ${name}`}
           />
         </g>
