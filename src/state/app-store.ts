@@ -160,7 +160,7 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
       : DEFAULT_SUBJECTS,
     study: { subjectId: null, task: "", ...((loaded.study as StudyContext | null) ?? {}) },
     progress: { ...DEFAULT_PROGRESS, ...((loaded.progress as Progress | null) ?? {}) },
-    audio: { ...DEFAULT_AUDIO, ...audioRaw, layers: { ...(audioRaw.layers ?? {}) } },
+    audio: { ...DEFAULT_AUDIO, ...audioRaw, layers: { ...DEFAULT_AUDIO.layers, ...(audioRaw.layers ?? {}) } },
     runtime: { ...state.runtime, lastInteraction: Date.now() },
     hydrated: true,
   };

@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Dozi — a cozy study room with a cat" },
       { name: "description", content: "Study with Dozi: a cozy focus timer, lo-fi music, ambient sounds and a little cat who studies with you." },
       { name: "author", content: "Dozi" },
-      { name: "theme-color", content: "#F5F0E8" },
+      { name: "theme-color", content: "#13201F" },
       { property: "og:title", content: "Dozi — a cozy study room with a cat" },
       { property: "og:description", content: "A cozy focus timer, lo-fi music, ambient sounds and a little study cat." },
       { property: "og:type", content: "website" },
@@ -113,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-theme="cafe" suppressHydrationWarning>
+    <html lang="en" data-theme="midnight-library" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <HeadContent />
