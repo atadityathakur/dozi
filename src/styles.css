@@ -416,6 +416,7 @@ html[data-theme="midnight-library"] .scene[data-weather][data-daypart] {
   --cat-line: oklch(0.35 0.04 40);
   --cat-shine: oklch(1 0 0);
   --cat-blush: oklch(0.8 0.1 10);
+  --cat-heart: oklch(0.7 0.17 12);
 }
 .cat[data-coat="snow"] {
   --cat-fur: oklch(0.975 0.006 250);

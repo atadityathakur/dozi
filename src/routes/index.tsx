@@ -7,6 +7,7 @@ import { StudyScene } from "@/components/study/study-scene";
 import { TimerPanel } from "@/components/study/timer-panel";
 import { TodayCard } from "@/components/study/today-card";
 import { getDaypart, useNow } from "@/hooks/use-now";
+import { RAINY_THEMES } from "@/lib/defaults";
 import { useApp } from "@/state/app-store";
 
 export const Route = createFileRoute("/")({
@@ -34,7 +35,9 @@ function SceneCaption() {
   const now = useNow(1000);
   const clock24 = useApp((s) => s.settings.clock24h);
   const name = useApp((s) => s.settings.companionName);
-  const rain = useApp((s) => s.runtime.ambiencePlaying && !!s.audio.layers["rain"]?.on);
+  const rain = useApp(
+    (s) => (s.runtime.ambiencePlaying && !!s.audio.layers["rain"]?.on) || RAINY_THEMES.includes(s.settings.theme),
+  );
   const daypart = getDaypart(now);
   const meta = DAYPART_META[daypart];
   const Icon = rain ? CloudRain : meta.icon;
@@ -43,7 +46,7 @@ function SceneCaption() {
     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-5 py-3 text-sm">
       <span className="flex items-center gap-2 text-muted-foreground">
         <Icon className="h-4 w-4 text-accent" />
-        {rain ? "Rain on the window" : meta.label} · tap {name} to say hi
+        {rain ? "Rain on the window" : meta.label} · hold {name} to pet
       </span>
       <span className="tabular font-semibold text-foreground" suppressHydrationWarning>
         {d
