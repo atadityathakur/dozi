@@ -32,8 +32,8 @@ export function AppRuntime() {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.theme = theme;
-    root.dataset.motion = reduced ? "reduced" : "full";
+    root.dataset["theme"] = theme;
+    root.dataset["motion"] = reduced ? "reduced" : "full";
     root.style.colorScheme = theme === "midnight" ? "dark" : "light";
   }, [theme, reduced]);
 
@@ -62,9 +62,8 @@ export function AppRuntime() {
     };
   }, []);
 
-  useEffect(
-    () =>
-      onAppEvent((e) => {
+  useEffect(() => {
+    const off = onAppEvent((e) => {
         if (e.type === "focus-complete") {
           if (!e.silent) audioController.chime("focus");
           toast("One more session in the books!", {
@@ -80,9 +79,11 @@ export function AppRuntime() {
           toast("Break's over", { description: "Ready for the next session?" });
           notify("Break finished", "Ready for the next focus session?");
         }
-      }),
-    [],
-  );
+    });
+    return () => {
+      off();
+    };
+  }, []);
 
   useEffect(() => {
     const onAct = () => appActions.noteInteraction();

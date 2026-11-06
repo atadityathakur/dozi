@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const ICONS = { sprout: Sprout, hourglass: Hourglass, sunrise: Sunrise, moon: Moon, flame: Flame, mountain: Mountain, trophy: Trophy, target: Target };
 
-export function AchievementBadge({ def, unlockedAt }: { def: AchievementDef; unlockedAt?: number }) {
+export function AchievementBadge({ def, unlockedAt }: { def: AchievementDef; unlockedAt?: number | undefined }) {
   const Icon = ICONS[def.icon];
   const unlocked = !!unlockedAt;
   return (

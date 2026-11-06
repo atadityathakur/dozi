@@ -219,7 +219,7 @@ export function completePhase(at: number, silent: boolean) {
       minutes,
       modeId: t.modeId,
       subjectId: s.study.subjectId,
-      task: s.study.task || undefined,
+      ...(s.study.task ? { task: s.study.task } : {}),
     };
     const sessions = [...s.sessions, session];
     const points = pointsForSession(minutes);
@@ -277,7 +277,7 @@ export const appActions = {
         {
           id: `${trimmed.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now().toString(36)}`,
           name: trimmed,
-          color: SUBJECT_COLORS[s.subjects.length % SUBJECT_COLORS.length],
+          color: SUBJECT_COLORS[s.subjects.length % SUBJECT_COLORS.length] ?? "var(--chart-1)",
         },
       ],
     }));

@@ -161,5 +161,5 @@ export const MIXES: { id: string; name: string; trackId: string | null; layers: 
 ];
 
 export function getTrack(id: string): TrackDef {
-  return TRACKS.find((t) => t.id === id) ?? TRACKS[0];
+  return TRACKS.find((t) => t.id === id) ?? TRACKS[0]!;
 }

@@ -1,6 +1,6 @@
-import { BookOpen, CloudRain, Coffee, Flame, MessagesSquare, Trees, Waves, Wind, type LucideIcon } from "lucide-react";
+import { BookOpen, CloudRain, Coffee, Flame, MessagesSquare, Music, Trees, Waves, Wind, type LucideIcon } from "lucide-react";
 
-export const LAYER_ICONS: Record<string, LucideIcon> = {
+const ICONS: Record<string, LucideIcon> = {
   rain: CloudRain,
   forest: Trees,
   ocean: Waves,
@@ -10,3 +10,7 @@ export const LAYER_ICONS: Record<string, LucideIcon> = {
   library: BookOpen,
   chatter: MessagesSquare,
 };
+
+export function layerIcon(id: string): LucideIcon {
+  return ICONS[id] ?? Music;
+}

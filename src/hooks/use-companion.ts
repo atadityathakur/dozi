@@ -38,9 +38,9 @@ const LINES: Record<CatState | "pet", string[]> = {
   pet: ["Purrrr…", "Hehe, that tickles!", "More head scratches, please.", "You're my favourite study buddy."],
 };
 
-function pick(list: string[], avoid?: string) {
+function pick(list: string[], avoid?: string): string {
   const options = list.length > 1 ? list.filter((l) => l !== avoid) : list;
-  return options[Math.floor(Math.random() * options.length)];
+  return options[Math.floor(Math.random() * options.length)] ?? "";
 }
 
 export function useCompanion(now: number) {

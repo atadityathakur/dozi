@@ -74,6 +74,7 @@ export const audioController = {
     const list = categoryTracks(current.category);
     const idx = list.findIndex((t) => t.id === current.id);
     const next = list[(idx + dir + list.length) % list.length];
+    if (!next) return;
     appActions.updateAudio({ trackId: next.id });
     if (runtime.musicPlaying) audioController.play();
   },

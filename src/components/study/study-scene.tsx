@@ -78,7 +78,7 @@ export function StudyScene() {
 
   const daypart = getDaypart(now);
   const raining =
-    (ambiencePlaying && !!layers.rain?.on) || (musicPlaying && trackId === "rainy-day") || theme === "library";
+    (ambiencePlaying && !!layers["rain"]?.on) || (musicPlaying && trackId === "rainy-day") || theme === "library";
   const anim = settings.ambientAnimations ? settings.animations : null;
   const lampOn =
     daypart === "night" ||
