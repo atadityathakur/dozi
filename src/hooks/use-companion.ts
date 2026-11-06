@@ -86,8 +86,12 @@ export function useCompanion(now: number) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
+  const lastPetLine = useRef(0);
   useEffect(() => {
     if (!petAt) return;
+    // Holding the cat pets it many times a second — only change the line now and then.
+    if (petAt - lastPetLine.current < 2500) return;
+    lastPetLine.current = petAt;
     const line = pick(LINES.pet, last.current);
     last.current = line;
     setMessage(line);
