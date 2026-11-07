@@ -8,6 +8,27 @@ import type { LayerDef, TrackDef } from "./catalog";
 
 type Stop = () => void;
 
+export type SfxKind =
+  | "click"
+  | "tick"
+  | "pour"
+  | "sip"
+  | "page"
+  | "type"
+  | "munch"
+  | "lap"
+  | "pop"
+  | "chirp"
+  | "boing"
+  | "squeak"
+  | "mew"
+  | "boof"
+  | "thump"
+  | "awoo"
+  | "sparkle"
+  | "bell"
+  | "whoosh";
+
 const mtof = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -18,6 +39,11 @@ class AudioEngine {
   private musicTone!: BiquadFilterNode;
   private ambienceOut!: GainNode;
   private sfxOut!: GainNode;
+  /** Room sound effects — its own bus, so music volume never affects it. */
+  private fxBus!: GainNode;
+  private purr: { stop: Stop } | null = null;
+  /** Called when a configured audio file can't be loaded. */
+  onFileError: ((src: string) => void) | null = null;
   private reverb!: ConvolverNode;
   private reverbSend!: GainNode;
   analyser: AnalyserNode | null = null;
@@ -65,6 +91,8 @@ class AudioEngine {
     this.ambienceOut.connect(this.master);
     this.sfxOut = ctx.createGain();
     this.sfxOut.connect(this.master);
+    this.fxBus = ctx.createGain();
+    this.fxBus.connect(this.master);
 
     this.buffers = this.makeNoise();
     if (ctx.state === "suspended") void ctx.resume();
@@ -129,6 +157,7 @@ class AudioEngine {
     const el = new Audio(src);
     el.crossOrigin = "anonymous";
     el.loop = true;
+    el.addEventListener("error", () => this.onFileError?.(src), { once: true });
     const node = this.ctx!.createMediaElementSource(el);
     node.connect(dest);
     void el.play().catch(() => {});
@@ -400,6 +429,169 @@ class AudioEngine {
     });
   }
 
+  /* ---------------- room sound effects ---------------- */
+
+  private tone(dest: AudioNode, type: OscillatorType, f0: number, f1: number, t: number, dur: number, vel: number) {
+    const ctx = this.ctx!;
+    const g = ctx.createGain();
+    g.connect(dest);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vel, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    const o = ctx.createOscillator();
+    o.type = type;
+    o.frequency.setValueAtTime(f0, t);
+    o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur * 0.8);
+    o.connect(g);
+    o.start(t);
+    o.stop(t + dur + 0.05);
+  }
+
+  private sweep(dest: AudioNode, t: number, dur: number, vel: number, f0: number, f1: number, q = 1.2) {
+    const ctx = this.ctx!;
+    const src = ctx.createBufferSource();
+    src.buffer = this.buffers!.white;
+    const bp = this.filter("bandpass", f0, q);
+    bp.frequency.setValueAtTime(f0, t);
+    bp.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vel, t + dur * 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(bp).connect(g).connect(dest);
+    src.start(t, Math.random());
+    src.stop(t + dur + 0.05);
+  }
+
+  sfx(kind: SfxKind, volume: number) {
+    const ctx = this.ensure();
+    if (!ctx || volume <= 0) return;
+    const out = ctx.createGain();
+    out.gain.value = volume;
+    out.connect(this.fxBus);
+    const t = ctx.currentTime + 0.01;
+    switch (kind) {
+      case "click":
+        this.noiseHit(out, t, 0.35, 0.03, "bandpass", 3200, 2);
+        this.tone(out, "sine", 1800, 1200, t, 0.05, 0.12);
+        break;
+      case "tick":
+        this.noiseHit(out, t, 0.3, 0.025, "bandpass", 4200, 4);
+        this.noiseHit(out, t + 0.34, 0.25, 0.025, "bandpass", 3000, 4);
+        break;
+      case "pour":
+        this.sweep(out, t, 1.1, 0.35, 500, 1900, 1.4);
+        break;
+      case "sip":
+        this.sweep(out, t, 0.22, 0.25, 900, 1500, 3);
+        this.sweep(out, t + 0.3, 0.18, 0.2, 1000, 1600, 3);
+        this.tone(out, "sine", 520, 380, t + 0.55, 0.12, 0.1);
+        break;
+      case "page":
+        this.sweep(out, t, 0.4, 0.28, 2400, 5200, 0.6);
+        break;
+      case "type":
+        for (let i = 0; i < 12; i++) {
+          this.noiseHit(out, t + i * 0.13 + rand(0, 0.05), rand(0.15, 0.28), 0.025, "bandpass", rand(2500, 4200), 3);
+        }
+        break;
+      case "munch":
+        for (let i = 0; i < 4; i++) this.noiseHit(out, t + i * 0.2, 0.35, 0.07, "bandpass", rand(1400, 2600), 1.5);
+        break;
+      case "lap":
+        for (let i = 0; i < 4; i++) this.tone(out, "sine", 900, 420, t + i * 0.24, 0.09, 0.14);
+        break;
+      case "pop":
+        this.tone(out, "sine", 380, 950, t, 0.09, 0.2);
+        break;
+      case "chirp":
+        for (let i = 0; i < 3; i++) this.tone(out, "sine", 3000 + i * 300, 4300, t + i * 0.1, 0.07, 0.07);
+        break;
+      case "boing":
+        this.tone(out, "triangle", 210, 560, t, 0.32, 0.18);
+        break;
+      case "squeak":
+        this.tone(out, "triangle", 1400, 2000, t, 0.12, 0.09);
+        this.tone(out, "triangle", 1900, 1300, t + 0.12, 0.14, 0.08);
+        break;
+      case "mew": {
+        const lp = this.filter("lowpass", 1600);
+        lp.connect(out);
+        this.tone(lp, "sawtooth", 620, 900, t, 0.22, 0.09);
+        this.tone(lp, "sawtooth", 900, 560, t + 0.18, 0.3, 0.08);
+        break;
+      }
+      case "boof": {
+        const lp = this.filter("lowpass", 700);
+        lp.connect(out);
+        this.tone(lp, "sawtooth", 240, 140, t, 0.16, 0.22);
+        this.noiseHit(out, t, 0.12, 0.1, "lowpass", 500);
+        break;
+      }
+      case "thump":
+        this.tone(out, "sine", 140, 55, t, 0.18, 0.45);
+        this.tone(out, "sine", 140, 55, t + 0.22, 0.16, 0.3);
+        break;
+      case "awoo": {
+        const lp = this.filter("lowpass", 1400);
+        lp.connect(out);
+        this.tone(lp, "sawtooth", 380, 620, t, 0.5, 0.09);
+        break;
+      }
+      case "sparkle":
+        [1568, 2093, 2637, 3136].forEach((f, i) => this.tone(out, "sine", f, f, t + i * 0.07, 0.4, 0.05));
+        break;
+      case "bell":
+        this.tone(out, "sine", 1318, 1318, t, 1.6, 0.14);
+        this.tone(out, "sine", 3954, 3954, t, 0.6, 0.03);
+        break;
+      case "whoosh":
+        this.sweep(out, t, 0.55, 0.3, 350, 1500, 0.8);
+        break;
+    }
+    window.setTimeout(() => out.disconnect(), 4000);
+  }
+
+  /** A soft looping purr while the pet is being held. */
+  startPurr(volume: number) {
+    const ctx = this.ensure();
+    if (!ctx || this.purr || volume <= 0) return;
+    const src = ctx.createBufferSource();
+    src.buffer = this.buffers!.brown;
+    src.loop = true;
+    const lp = this.filter("lowpass", 320);
+    const am = ctx.createGain();
+    am.gain.value = 0.5;
+    const lfo = this.lfo(24, 0.45, am.gain);
+    const out = ctx.createGain();
+    out.gain.setValueAtTime(0, ctx.currentTime);
+    out.gain.linearRampToValueAtTime(volume * 0.9, ctx.currentTime + 0.2);
+    src.connect(lp).connect(am).connect(out).connect(this.fxBus);
+    src.start();
+    this.purr = {
+      stop: () => {
+        const t = ctx.currentTime;
+        out.gain.cancelScheduledValues(t);
+        out.gain.setValueAtTime(out.gain.value, t);
+        out.gain.linearRampToValueAtTime(0, t + 0.25);
+        window.setTimeout(() => {
+          try {
+            src.stop();
+            lfo.stop();
+          } catch {
+            /* already stopped */
+          }
+          out.disconnect();
+        }, 400);
+      },
+    };
+  }
+
+  stopPurr() {
+    this.purr?.stop();
+    this.purr = null;
+  }
+
   /* ---------------- ambience ---------------- */
 
   isLayerOn(id: string) {
@@ -531,6 +723,63 @@ class AudioEngine {
             o.stop(t + 0.12);
           }
         }, 1400, 5200);
+        break;
+      }
+      case "birds": {
+        const g = gainNode(0.05);
+        const hp = this.filter("highpass", 2200);
+        hp.connect(g).connect(out);
+        nodes.push(this.loopNoise("pink", hp));
+        const song = (vol: number) => {
+          const t0 = ctx.currentTime + 0.05;
+          const count = Math.floor(rand(2, 7));
+          const base = rand(2600, 4400);
+          for (let i = 0; i < count; i++) {
+            const t = t0 + i * rand(0.07, 0.14);
+            const o = ctx.createOscillator();
+            const cg = ctx.createGain();
+            const f = base * rand(0.9, 1.15);
+            o.frequency.setValueAtTime(f, t);
+            o.frequency.exponentialRampToValueAtTime(f * rand(1.15, 1.7), t + 0.05);
+            o.frequency.exponentialRampToValueAtTime(f * 0.85, t + 0.09);
+            cg.gain.setValueAtTime(0.0001, t);
+            cg.gain.linearRampToValueAtTime(vol, t + 0.01);
+            cg.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+            o.connect(cg).connect(out);
+            o.start(t);
+            o.stop(t + 0.12);
+          }
+        };
+        every(() => song(0.07), 500, 2000);
+        every(() => song(0.035), 1200, 3800);
+        break;
+      }
+      case "crickets": {
+        const g = gainNode(0.12);
+        const lp = this.filter("lowpass", 320);
+        lp.connect(g).connect(out);
+        nodes.push(this.loopNoise("brown", lp));
+        const cricket = (freq: number, vol: number) => {
+          const t0 = ctx.currentTime + 0.02;
+          for (let i = 0; i < 3; i++) {
+            const t = t0 + i * 0.055;
+            const cg = ctx.createGain();
+            cg.connect(out);
+            cg.gain.setValueAtTime(0.0001, t);
+            cg.gain.linearRampToValueAtTime(vol, t + 0.008);
+            cg.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+            this.osc("sine", freq, t, 0.05, cg);
+          }
+        };
+        every(() => cricket(rand(4300, 4500), 0.035), 380, 760);
+        every(() => cricket(rand(4900, 5100), 0.02), 520, 1300);
+        break;
+      }
+      case "whitenoise": {
+        const g = gainNode(0.2);
+        const lp = this.filter("lowpass", 9000);
+        lp.connect(g).connect(out);
+        nodes.push(this.loopNoise("white", lp));
         break;
       }
       case "ocean": {
