@@ -16,7 +16,9 @@ import {
   SUBJECT_COLORS,
   getMode,
 } from "@/lib/defaults";
+import { SOUND_CATEGORIES } from "@/lib/audio/catalog";
 import { localPersistence, type PersistenceAdapter } from "@/lib/persistence";
+import { isPetId, petFromCoat } from "@/lib/pets";
 import { dayKey, minutesOnDay } from "@/lib/stats";
 import * as T from "@/lib/timer";
 import type {
@@ -38,6 +40,8 @@ export interface Runtime {
   petAt: number | null;
   lastInteraction: number;
   lastCompleted: { phase: Phase; at: number } | null;
+  /** Sound ids whose audio file failed to load. */
+  unavailable: string[];
 }
 
 export interface AppState {
@@ -70,7 +74,15 @@ export function createInitialState(): AppState {
     study: { subjectId: null, task: "" },
     progress: DEFAULT_PROGRESS,
     audio: DEFAULT_AUDIO,
-    runtime: { musicPlaying: false, ambiencePlaying: false, celebrateAt: null, petAt: null, lastInteraction: 0, lastCompleted: null },
+    runtime: {
+      musicPlaying: false,
+      ambiencePlaying: false,
+      celebrateAt: null,
+      petAt: null,
+      lastInteraction: 0,
+      lastCompleted: null,
+      unavailable: [],
+    },
   };
 }
 
@@ -147,7 +159,14 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
       : {}),
     animations: { ...DEFAULT_SETTINGS.animations, ...(settingsRaw.animations ?? {}) },
   };
+  // Pick up the saved pet, or derive it from the cat coat older saves stored.
+  settings.pet = isPetId(settingsRaw.pet)
+    ? settingsRaw.pet
+    : outdated
+      ? DEFAULT_SETTINGS.pet
+      : petFromCoat(settingsRaw.companionCoat);
   const audioRaw = (loaded.audio ?? {}) as Partial<AudioPrefs>;
+  if (audioRaw.category && !SOUND_CATEGORIES.some((c) => c.id === audioRaw.category)) audioRaw.category = "lofi";
   const timer = (loaded.timer as TimerState | null) ?? initialTimer(settings);
 
   state = {
