@@ -3,6 +3,10 @@ export type Phase = "focus" | "break";
 export type TimerStatus = "idle" | "running" | "paused";
 export type ThemeId = "midnight-library" | "cafe" | "library" | "midnight";
 export type CoatId = "snow" | "ginger" | "grey" | "midnight" | "cream";
+export type PetId = "cat-orange" | "cat-black" | "cat-white" | "puppy" | "bunny" | "shiba";
+export type LampSetting = "auto" | "on" | "off";
+export type Weather = "clear" | "cloudy" | "rain";
+export type WeatherSetting = "auto" | Weather;
 
 export interface TimerMode {
   id: ModeId;
@@ -69,7 +73,14 @@ export interface Settings {
   dailyGoalMinutes: number;
   dailyGoalSessions: number;
   companionName: string;
+  /** Legacy cat coat (kept so older saves migrate to `pet`). */
   companionCoat: CoatId;
+  pet: PetId;
+  /** Room sound effects (petting, lamp click…) — separate from music volume. */
+  sfxEnabled: boolean;
+  sfxVolume: number; // 0..1
+  lamp: LampSetting;
+  weather: WeatherSetting;
   /** Bumped when new defaults should be applied once to returning visitors. */
   prefsVersion?: number;
 }
