@@ -1,4 +1,4 @@
-import type { AudioPrefs, ModeId, Progress, Settings, Subject, ThemeId, TimerMode } from "./types";
+import type { AudioPrefs, CoatId, ModeId, Progress, Settings, Subject, ThemeId, TimerMode } from "./types";
 
 export const MODES: Record<Exclude<ModeId, "custom">, TimerMode> = {
   pomodoro: { id: "pomodoro", label: "Pomodoro", sessionLabel: "Pomodoro Session", focusMin: 25, breakMin: 5 },
@@ -86,6 +86,14 @@ export const THEMES: { id: ThemeId; name: string; blurb: string; swatch: string[
   { id: "cafe", name: "Cozy Café", blurb: "Warm cream, brown and terracotta", swatch: ["#F5F0E8", "#263A32", "#C98267", "#E6C77A"] },
   { id: "library", name: "Rainy Library", blurb: "Deep green, charcoal and muted blue", swatch: ["#DCE3DE", "#1F3A33", "#6E8CA6", "#2B3033"] },
   { id: "midnight", name: "Midnight Study", blurb: "Dark navy, lamp light and gold", swatch: ["#111829", "#1B2440", "#E8B86A", "#D98E5F"] },
+];
+
+export const COATS: { id: CoatId; name: string }[] = [
+  { id: "snow", name: "Snowball white" },
+  { id: "ginger", name: "Ginger" },
+  { id: "grey", name: "Smoky grey" },
+  { id: "midnight", name: "Midnight black" },
+  { id: "cream", name: "Cream" },
 ];
 
 /** Bonus points for hitting the daily focus goal (once per day). */

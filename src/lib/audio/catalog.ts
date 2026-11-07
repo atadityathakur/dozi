@@ -39,6 +39,12 @@ export const SOUND_CATEGORIES: { id: SoundCategory; name: string }[] = [
   { id: "relax", name: "Relaxation" },
 ];
 
+/** Categories that contain music tracks (used by the current player tabs). */
+export const MUSIC_CATEGORIES: { id: TrackDef["category"]; name: string }[] = [
+  { id: "lofi", name: "Lo-fi" },
+  { id: "relax", name: "Relaxation" },
+];
+
 export const TRACKS: TrackDef[] = [
   {
     id: "cozy-beats",
