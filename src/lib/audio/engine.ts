@@ -182,7 +182,7 @@ class AudioEngine {
       src.buffer = this.buffers!.crackle;
       src.loop = true;
       const g = ctx.createGain();
-      g.gain.value = def.variant === "dusty" ? 0.42 : def.variant === "sleepy" ? 0.3 : 0.22;
+      g.gain.value = 0.22;
       const hp = ctx.createBiquadFilter();
       hp.type = "highpass";
       hp.frequency.value = 900;
@@ -207,46 +207,20 @@ class AudioEngine {
       const barLen = eighth * 8 * chordBars;
 
       if (def.style === "lofi") {
-        const v = def.variant ?? "classic";
-
         if (pos === 0) {
-          chord.forEach((n, k) =>
-            this.rhodes(dest, mtof(n), t + k * 0.012, barLen * 0.95, v === "jazzy" ? 0.1 : 0.09, v === "tape"),
-          );
+          chord.forEach((n, k) => this.rhodes(dest, mtof(n), t + k * 0.012, barLen * 0.95, 0.09));
           this.bass(dest, mtof(chord[0] - 12), t, beat * 1.6, 0.32);
         }
-
-        // bass movement
-        if (v === "chillhop") {
-          // walking bass
-          if (pos === 3) this.bass(dest, mtof(chord[2] - 12), t, beat * 0.9, 0.2);
-          if (pos === 5) this.bass(dest, mtof(chord[1] - 12), t, beat * 0.9, 0.22);
-          if (pos === 7 && Math.random() < 0.5) this.bass(dest, mtof(chord[0] - 12 + 2), t, beat * 0.6, 0.16);
-        } else if (pos === 5) {
-          this.bass(dest, mtof(chord[0] - 12), t, beat * 1.2, 0.22);
-        }
-
-        // chord comping (off-beat stabs)
-        const compChance = v === "jazzy" ? 0.7 : v === "sleepy" ? 0.15 : 0.4;
-        if (pos === 3 && Math.random() < compChance) chord.slice(1).forEach((n) => this.rhodes(dest, mtof(n), t, beat, 0.04, v === "tape"));
-        if (v === "jazzy" && pos === 6 && Math.random() < 0.4) chord.slice(1).forEach((n) => this.rhodes(dest, mtof(n), t, beat * 0.8, 0.035));
-
-        // drums
+        if (pos === 5) this.bass(dest, mtof(chord[0] - 12), t, beat * 1.2, 0.22);
+        if (pos === 3 && Math.random() < 0.4) chord.slice(1).forEach((n) => this.rhodes(dest, mtof(n), t, beat, 0.04));
         if (def.drums > 0) {
-          const kickHere =
-            v === "chillhop"
-              ? pos === 0 || (pos === 3 && Math.random() < 0.6) || (pos === 5 && Math.random() < 0.5)
-              : pos === 0 || (pos === 5 && Math.random() < 0.8) || (pos === 7 && Math.random() < 0.2);
-          if (kickHere) this.kick(dest, t, 0.8 * def.drums);
+          if (pos === 0 || (pos === 5 && Math.random() < 0.8) || (pos === 7 && Math.random() < 0.2)) this.kick(dest, t, 0.8 * def.drums);
           if (pos === 2 || pos === 6) this.snare(dest, t, 0.28 * def.drums);
-          this.hat(dest, t, (pos % 2 === 0 ? 0.07 : v === "chillhop" ? 0.055 : 0.04) * def.drums);
+          this.hat(dest, t, (pos % 2 === 0 ? 0.07 : 0.04) * def.drums);
         }
-
-        // little piano melody notes
-        const melodyChance = v === "jazzy" ? 0.45 : v === "sleepy" ? 0.3 : 0.22;
-        if (Math.random() < melodyChance) {
+        if (Math.random() < 0.22) {
           const n = (chord[Math.floor(Math.random() * chord.length)] ?? chord[0]) + 12;
-          this.piano(dest, mtof(n), t, beat * 2, v === "sleepy" ? 0.05 : 0.06);
+          this.piano(dest, mtof(n), t, beat * 2, 0.06);
         }
       } else if (def.style === "piano") {
         if (pos === 0) {
@@ -315,7 +289,7 @@ class AudioEngine {
     return o;
   }
 
-  private rhodes(dest: AudioNode, f: number, t: number, dur: number, vel: number, wobble = false) {
+  private rhodes(dest: AudioNode, f: number, t: number, dur: number, vel: number) {
     const ctx = this.ctx!;
     const g = ctx.createGain();
     const lp = ctx.createBiquadFilter();
@@ -323,20 +297,8 @@ class AudioEngine {
     lp.frequency.value = 1800;
     g.connect(lp).connect(dest);
     this.env(g, t, vel, 0.015, dur, 0.4);
-    const a = this.osc("sine", f, t, dur, g);
-    const b = this.osc("triangle", f, t, dur, g, 6);
-    if (wobble) {
-      // slow pitch drift, like a warped cassette
-      const l = ctx.createOscillator();
-      l.frequency.value = rand(0.4, 0.7);
-      const d = ctx.createGain();
-      d.gain.value = rand(12, 22); // cents
-      l.connect(d);
-      d.connect(a.detune);
-      d.connect(b.detune);
-      l.start(t);
-      l.stop(t + dur + 0.05);
-    }
+    this.osc("sine", f, t, dur, g);
+    this.osc("triangle", f, t, dur, g, 6);
     const bell = ctx.createGain();
     bell.connect(dest);
     this.env(bell, t, vel * 0.25, 0.005, 0.5, 0.1);

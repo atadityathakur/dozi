@@ -72,21 +72,6 @@ function StudyRoom() {
           </section>
         </div>
       </div>
-
-      {/* Lo-fi radio, just below the study room */}
-      <section className="surface mt-6 overflow-hidden" aria-label="Lo-fi radio">
-        <div className="aspect-video w-full">
-          <iframe
-            className="h-full w-full"
-            src="https://www.youtube.com/embed/rFZHOHl-L8A"
-            title="lofi hip hop radio 📚 beats to relax/study to"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-            loading="lazy"
-          />
-        </div>
-      </section>
       <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         <MusicPlayer />
         <GoalCard />
