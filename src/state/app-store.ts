@@ -327,6 +327,10 @@ export const appActions = {
   pet() {
     setState((s) => ({ runtime: { ...s.runtime, petAt: Date.now(), lastInteraction: Date.now() } }));
   },
+  /** Any direct interaction with the pet or room wakes it up immediately. */
+  wake() {
+    setState((s) => ({ runtime: { ...s.runtime, lastInteraction: Date.now() } }));
+  },
   noteInteraction() {
     const now = Date.now();
     if (now - state.runtime.lastInteraction < 15_000) return;
