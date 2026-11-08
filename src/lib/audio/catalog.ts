@@ -8,12 +8,25 @@
 export type MusicStyle = "lofi" | "piano" | "pluck" | "pad";
 export type SoundCategory = "lofi" | "nature" | "cafe" | "relax";
 
+/**
+ * Flavour of a lo-fi track (only used when style === "lofi"):
+ *  classic  – the original pattern
+ *  jazzy    – busier chord comping and a livelier piano melody
+ *  dusty    – heavy vinyl crackle, darker and slower
+ *  chillhop – boom-bap kick pattern, walking bass, steady hats
+ *  sleepy   – drumless, sparse piano, extra soft
+ *  tape     – Rhodes pitch wobble, like a warped cassette
+ */
+export type LofiVariant = "classic" | "jazzy" | "dusty" | "chillhop" | "sleepy" | "tape";
+
 export interface TrackDef {
   id: string;
   title: string;
   category: Extract<SoundCategory, "lofi" | "relax">;
   mood: string;
   style: MusicStyle;
+  /** Lo-fi flavour. Defaults to "classic". */
+  variant?: LofiVariant;
   bpm: number;
   /** Each chord is a list of MIDI notes; one chord per bar. */
   chords: number[][];
@@ -97,6 +110,116 @@ export const TRACKS: TrackDef[] = [
     drums: 0.75,
     lengthSec: 210,
   },
+
+  /* ---------- new lo-fi tracks ---------- */
+  {
+    id: "jazzy-cafe",
+    title: "Jazz Café Lo-fi",
+    category: "lofi",
+    mood: "Smoky corner table, brushed hats",
+    style: "lofi",
+    variant: "jazzy",
+    bpm: 82,
+    chords: [
+      [50, 53, 57, 60, 64], // Dm9
+      [55, 59, 62, 65], // G7
+      [48, 52, 55, 59, 62], // Cmaj9
+      [57, 61, 64, 67], // A7
+    ],
+    tone: 2800,
+    drums: 0.8,
+    lengthSec: 200,
+  },
+  {
+    id: "dusty-vinyl",
+    title: "Dusty Vinyl",
+    category: "lofi",
+    mood: "Crackly record, slow afternoon",
+    style: "lofi",
+    variant: "dusty",
+    bpm: 68,
+    chords: [
+      [57, 60, 64, 67], // Am7
+      [53, 57, 60, 64], // Fmaj7
+      [50, 53, 57, 60], // Dm7
+      [52, 56, 59, 62], // E7
+    ],
+    tone: 1500,
+    drums: 0.6,
+    lengthSec: 210,
+  },
+  {
+    id: "chillhop-stroll",
+    title: "Chillhop Stroll",
+    category: "lofi",
+    mood: "Headphones on, walking home",
+    style: "lofi",
+    variant: "chillhop",
+    bpm: 84,
+    chords: [
+      [48, 52, 55, 59], // Cmaj7
+      [45, 48, 52, 55], // Am7
+      [53, 57, 60, 64], // Fmaj7
+      [55, 59, 62, 65], // G7
+    ],
+    tone: 2900,
+    drums: 1,
+    lengthSec: 190,
+  },
+  {
+    id: "sleepy-keys",
+    title: "Sleepy Keys",
+    category: "lofi",
+    mood: "No drums, just soft keys and hush",
+    style: "lofi",
+    variant: "sleepy",
+    bpm: 60,
+    chords: [
+      [53, 57, 60, 64], // Fmaj7
+      [52, 55, 59, 62], // Em7
+      [50, 53, 57, 60], // Dm7
+      [48, 52, 55, 59], // Cmaj7
+    ],
+    tone: 1800,
+    drums: 0,
+    lengthSec: 230,
+  },
+  {
+    id: "warped-tape",
+    title: "Warped Tape",
+    category: "lofi",
+    mood: "Old cassette, gently wobbling",
+    style: "lofi",
+    variant: "tape",
+    bpm: 72,
+    chords: [
+      [51, 55, 58, 62], // Ebmaj7
+      [48, 51, 55, 58], // Cm7
+      [56, 60, 63, 67], // Abmaj7
+      [58, 62, 65, 68], // Bb7
+    ],
+    tone: 2000,
+    drums: 0.7,
+    lengthSec: 200,
+  },
+  {
+    id: "sunday-morning",
+    title: "Sunday Morning",
+    category: "lofi",
+    mood: "Sunlight, slow coffee",
+    style: "lofi",
+    bpm: 78,
+    chords: [
+      [55, 59, 62, 66], // Gmaj7
+      [52, 55, 59, 62], // Em7
+      [48, 52, 55, 59], // Cmaj7
+      [50, 54, 57, 60], // D7
+    ],
+    tone: 3000,
+    drums: 0.8,
+    lengthSec: 190,
+  },
+
   {
     id: "soft-instrumental",
     title: "Chill Instrumentals",
@@ -171,6 +294,9 @@ export const MIXES: { id: string; name: string; trackId: string | null; layers: 
   { id: "forest-cabin", name: "Forest cabin", trackId: "soft-instrumental", layers: { forest: 0.6, wind: 0.3 } },
   { id: "summer-night", name: "Summer night", trackId: "calm-atmosphere", layers: { crickets: 0.55 } },
   { id: "silent-library", name: "Silent library", trackId: null, layers: { library: 0.6, rain: 0.3 } },
+  { id: "jazz-cafe-mix", name: "Jazz + Café", trackId: "jazzy-cafe", layers: { cafe: 0.4 } },
+  { id: "dusty-fire", name: "Dusty vinyl + Fire", trackId: "dusty-vinyl", layers: { fireplace: 0.5 } },
+  { id: "sleepy-night", name: "Sleepy night", trackId: "sleepy-keys", layers: { crickets: 0.4, rain: 0.25 } },
 ];
 
 export function getTrack(id: string): TrackDef {
