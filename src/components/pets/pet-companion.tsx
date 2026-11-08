@@ -141,7 +141,7 @@ export function PetCompanion({
   const typing = settled && !holding && (action === "type" || (studying && action === "none"));
   const fast = action === "type" || mood === "focused";
   const sipping = mood === "break" && settled && action === "none";
-  const showBook = settled && !sipping && (quiet || action === "wave" || action === "excited") && action !== "sleep";
+  const showBook = settled && !sipping && (quiet || action === "wave" || action === "excited");
 
   const art: ArtProps = {
     eyes,
