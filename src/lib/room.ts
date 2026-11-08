@@ -6,6 +6,19 @@ import { DARK_THEMES, RAINY_THEMES } from "./defaults";
 import type { LampSetting, ThemeId, Weather, WeatherSetting } from "./types";
 
 export type Spot = "home" | "bed" | "food" | "water" | "toy";
+export type PetAction =
+  | "none"
+  | "stretch"
+  | "roll"
+  | "wave"
+  | "excited"
+  | "zoomies"
+  | "eat"
+  | "drink"
+  | "sleep"
+  | "play"
+  | "type";
+export type PetZone = "head" | "body" | "paws";
 
 /** X position (scene units) of each place the pet can go. All sit on the desk line. */
 export const SPOT_X: Record<Spot, number> = { home: 400, bed: 751, food: 580, water: 618, toy: 172 };
