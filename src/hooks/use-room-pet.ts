@@ -145,7 +145,7 @@ export function useRoomPet(now: number) {
       target: Spot,
       act: PetAction,
       ms: number,
-      opts: { sfx?: SfxKind; lines?: string[]; speak?: SpeakKind; stay?: boolean; passive?: boolean } = {},
+      opts: { sfx?: SfxKind | undefined; lines?: string[] | undefined; speak?: SpeakKind; stay?: boolean; passive?: boolean | undefined } = {},
     ) => {
       const g = ++gen.current;
       busy.current = true;
@@ -169,7 +169,7 @@ export function useRoomPet(now: number) {
 
   /** React on the spot, wherever the pet currently is. */
   const react = useCallback(
-    (act: PetAction, ms: number, opts: { sfx?: SfxKind; lines?: string[]; speak?: SpeakKind } = {}) => {
+    (act: PetAction, ms: number, opts: { sfx?: SfxKind | undefined; lines?: string[] | undefined; speak?: SpeakKind } = {}) => {
       void perform(spotRef.current, act, ms, { ...opts, stay: true });
     },
     [perform],
