@@ -10,7 +10,7 @@ import { engine, type SfxKind } from "./engine";
  * Play a room sound. `passive` sounds (not triggered by a click) only play
  * once audio has already been unlocked by the user.
  */
-export function playSfx(kind: SfxKind | null | undefined, opts: { passive?: boolean } = {}): boolean {
+export function playSfx(kind: SfxKind | null | undefined, opts: { passive?: boolean | undefined } = {}): boolean {
   if (!kind) return false;
   const { sfxEnabled, sfxVolume } = getState().settings;
   if (!sfxEnabled || sfxVolume <= 0) return false;
