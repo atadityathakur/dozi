@@ -19,6 +19,15 @@ export function playSfx(kind: SfxKind | null | undefined, opts: { passive?: bool
   return true;
 }
 
+/**
+ * Call inside a click handler when a sound will play a moment later (after
+ * the pet walks somewhere) so the browser lets it through.
+ */
+export function primeSfx() {
+  const { sfxEnabled, sfxVolume } = getState().settings;
+  if (sfxEnabled && sfxVolume > 0) engine.ensure();
+}
+
 export function startPurr(): boolean {
   const { sfxEnabled, sfxVolume } = getState().settings;
   if (!sfxEnabled || sfxVolume <= 0) return false;

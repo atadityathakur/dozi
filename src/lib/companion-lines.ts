@@ -92,8 +92,11 @@ export function pickLine(list: string[], avoid?: string): string {
   return options[Math.floor(Math.random() * options.length)] ?? "";
 }
 
-/** Speech bubbles never appear more often than these gaps. */
-export const MESSAGE_GAP = { interaction: 5_000, auto: 25_000 } as const;
+/**
+ * Speech bubbles never appear more often than these gaps (measured from the
+ * last line of any kind). Clicking a room object answers a little sooner.
+ */
+export const MESSAGE_GAP = { object: 1_500, interaction: 5_000, auto: 25_000 } as const;
 
 export function canSpeak(lastSaidAt: number, now: number, kind: keyof typeof MESSAGE_GAP): boolean {
   return now - lastSaidAt >= MESSAGE_GAP[kind];
