@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { PageHeader } from "@/components/page-header";
-import { CatCompanion } from "@/components/study/cat-companion";
+import { PetCompanion } from "@/components/pets/pet-companion";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/state/app-store";
 
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Dozi" },
-      { name: "description", content: "Dozi is a cozy study-with-me room: a focus timer, lo-fi music, rain and a little cat who studies with you." },
+      { name: "description", content: "Dozi is a cozy study-with-me room: a focus timer, lo-fi music, rain and a little companion who studies with you." },
       { property: "og:title", content: "About Dozi" },
       { property: "og:description", content: "Why Dozi exists and how to get the most out of your study sessions." },
       { property: "og:type", content: "website" },
@@ -22,12 +22,12 @@ export const Route = createFileRoute("/about")({
 const TIPS = [
   { title: "Pick a timer", body: "Pomodoro (25/5) for quick wins, Deep Focus (50/10) for real work, Long Study (90/15) for marathon days." },
   { title: "Set the mood", body: "Put on lo-fi and layer some rain or a fireplace. Your mix is saved for next time." },
-  { title: "Study together", body: "Your cat puts on its glasses while you focus, stretches on breaks and celebrates every finished session." },
+  { title: "Study together", body: "Your companion puts on glasses while you focus, stretches on breaks and celebrates every finished session." },
   { title: "Watch it grow", body: "Every session earns focus points, builds your streak and unlocks little badges." },
 ];
 
 function AboutPage() {
-  const coat = useApp((s) => s.settings.companionCoat);
+  const petId = useApp((s) => s.settings.pet);
   const name = useApp((s) => s.settings.companionName);
   return (
     <main className="mx-auto max-w-5xl px-4 pb-10 pt-8 sm:px-6">
@@ -44,7 +44,7 @@ function AboutPage() {
           </Button>
         </div>
         <div className="mx-auto h-52 w-52">
-          <CatCompanion state="idle" coat={coat} standalone label={`${name} the cat`} />
+          <PetCompanion petId={petId || "cat-white"} mood="idle" standalone label={`${name} your companion`} />
         </div>
       </section>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">

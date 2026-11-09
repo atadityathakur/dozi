@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/page-header";
-import { CatCompanion } from "@/components/study/cat-companion";
+import { PetCompanion } from "@/components/pets/pet-companion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +22,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { COATS, MODE_ORDER, THEMES, getMode } from "@/lib/defaults";
+import { MODE_ORDER, THEMES, getMode } from "@/lib/defaults";
+import { PETS } from "@/lib/pets";
 import type { AnimationToggles, ModeId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { appActions, useApp } from "@/state/app-store";
@@ -138,34 +139,48 @@ function SettingsPage() {
           </div>
         </Card>
 
-        <Card title="Your study cat" hint="Give your companion a name and pick a coat.">
+        <Card title="Your study companion" hint="Give your companion a name and pick who studies with you.">
           <div className="grid items-center gap-4 sm:grid-cols-[140px_1fr]">
             <div className="mx-auto h-36 w-36">
-              <CatCompanion state="idle" coat={s.companionCoat} standalone label={`${s.companionName} preview`} />
+              <PetCompanion petId={s.pet || "cat-white"} mood="idle" standalone label={`${s.companionName} preview`} />
             </div>
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <Label htmlFor="cat-name" className="text-sm font-semibold">Name</Label>
+                <Label htmlFor="companion-name" className="text-sm font-semibold">Name</Label>
                 <Input
-                  id="cat-name"
+                  id="companion-name"
                   value={s.companionName}
                   maxLength={20}
                   onChange={(e) => update({ companionName: e.target.value || "Mochi" })}
                   className="bg-background"
                 />
               </div>
-              <div className="flex flex-wrap gap-2">
-                {COATS.map((c) => (
-                  <Button
-                    key={c.id}
-                    size="sm"
-                    variant={s.companionCoat === c.id ? "default" : "soft"}
-                    className="rounded-full"
-                    onClick={() => update({ companionCoat: c.id })}
-                  >
-                    {c.name}
-                  </Button>
-                ))}
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {PETS.map((p) => {
+                  const active = (s.pet || "cat-white") === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() =>
+                        update({
+                          pet: p.id,
+                          companionCoat: p.id === "cat-orange" ? "ginger" : p.id === "cat-black" ? "midnight" : "snow",
+                        })
+                      }
+                      className={cn(
+                        "flex flex-col items-start gap-0.5 rounded-xl border p-2 text-left transition-colors",
+                        active ? "border-primary bg-muted shadow-sm" : "border-border hover:border-accent bg-card/50",
+                      )}
+                    >
+                      <span className="text-xs font-semibold text-foreground flex items-center justify-between w-full">
+                        <span>{p.name}</span>
+                        {active && <Check className="h-3 w-3 text-primary" />}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground line-clamp-1">{p.blurb}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
