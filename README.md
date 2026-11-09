@@ -1,26 +1,20 @@
-# Dozi
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-make this website "Dozi":
+# Run and deploy your AI Studio app
 
-This project was built with [Lovable](https://lovable.dev).
+This contains everything you need to run your app locally.
 
-**Live app**: https://dozi.lovable.app
+View your app in AI Studio: https://ai.studio/apps/15a2ef82-acb0-4170-8a07-4ed878860699
 
-## Build with Lovable
+## Run Locally
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/2d12fe95-77ef-42d2-a432-af7cfc0125f7).
+**Prerequisites:**  Node.js
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

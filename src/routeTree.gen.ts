@@ -15,6 +15,7 @@ import { Route as SessionsRouteImport } from './routes/sessions'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SoundsRouteImport } from './routes/sounds'
 import { Route as StatsRouteImport } from './routes/stats'
+import { Route as YapDashRouteImport } from './routes/yapdash'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const StatsRoute = StatsRouteImport.update({
   path: '/stats',
   getParentRoute: () => rootRouteImport,
 } as any)
+const YapDashRoute = YapDashRouteImport.update({
+  id: '/yapdash',
+  path: '/yapdash',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sounds': typeof SoundsRoute
   '/stats': typeof StatsRoute
+  '/yapdash': typeof YapDashRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sounds': typeof SoundsRoute
   '/stats': typeof StatsRoute
+  '/yapdash': typeof YapDashRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +79,13 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sounds': typeof SoundsRoute
   '/stats': typeof StatsRoute
+  '/yapdash': typeof YapDashRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/sessions' | '/settings' | '/sounds' | '/stats'
+  fullPaths: '/' | '/about' | '/sessions' | '/settings' | '/sounds' | '/stats' | '/yapdash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/sessions' | '/settings' | '/sounds' | '/stats'
+  to: '/' | '/about' | '/sessions' | '/settings' | '/sounds' | '/stats' | '/yapdash'
   id:
     | '__root__'
     | '/'
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sounds'
     | '/stats'
+    | '/yapdash'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +104,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SoundsRoute: typeof SoundsRoute
   StatsRoute: typeof StatsRoute
+  YapDashRoute: typeof YapDashRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StatsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/yapdash': {
+      id: '/yapdash'
+      path: '/yapdash'
+      fullPath: '/yapdash'
+      preLoaderRoute: typeof YapDashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -150,6 +168,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SoundsRoute: SoundsRoute,
   StatsRoute: StatsRoute,
+  YapDashRoute: YapDashRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

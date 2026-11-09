@@ -135,7 +135,7 @@ function StatsPage() {
                 <Tooltip
                   cursor={{ fill: "var(--muted)" }}
                   contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, color: "var(--foreground)" }}
-                  formatter={(v: number) => [formatMinutes(v), "Focus"]}
+                  formatter={(v: any) => [formatMinutes(Number(v) || 0), "Focus"]}
                   labelFormatter={(_, p) => p?.[0]?.payload?.label ?? ""}
                 />
                 <Bar dataKey="minutes" radius={[8, 8, 3, 3]}>

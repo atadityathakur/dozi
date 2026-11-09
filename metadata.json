@@ -1,0 +1,6 @@
+{
+  "name": "Dozi & YapDash",
+  "description": "Study with Dozi: cozy focus timer, lo-fi music, ambient sounds, study cat companion, and seamlessly embedded YapDash live quiz rooms.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

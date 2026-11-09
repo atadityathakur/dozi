@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, Menu, Palette, Sparkles } from "lucide-react";
+import { Check, Menu, Palette, Radio, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ const LINKS = [
   { to: "/sessions", label: "Sessions" },
   { to: "/settings", label: "Settings" },
   { to: "/about", label: "About" },
+  { to: "/yapdash", label: "YapDash" },
 ] as const;
 
 function ThemeMenu() {
@@ -88,6 +89,14 @@ export function SiteNav() {
           ))}
         </ul>
         <div className="flex items-center gap-1.5">
+          <Link
+            to="/yapdash"
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 px-3.5 py-1.5 text-xs font-bold text-white shadow-soft transition-all hover:scale-105 hover:opacity-90"
+            title="Go to YapDash"
+          >
+            <Radio className="h-3.5 w-3.5 animate-pulse" />
+            <span>YapDash</span>
+          </Link>
           <PointsPill />
           <ThemeMenu />
           <Sheet open={open} onOpenChange={setOpen}>
