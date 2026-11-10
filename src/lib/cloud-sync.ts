@@ -193,9 +193,10 @@ export async function flushNow(): Promise<void> {
       const now = getState();
       const doneUps = new Set(rows.map((r) => r.id));
       const doneDel = new Set(snap.deletes);
+      const nowIds = new Set(now.sessions.map((x) => x.id));
       savePending({
         keys: pending.keys.filter((k) => !(k in uploaded) || now[k] !== uploaded[k]),
-        upserts: pending.upserts.filter((id) => !doneUps.has(id) || !snap.upserts.includes(id)),
+        upserts: pending.upserts.filter((id) => !doneUps.has(id) && nowIds.has(id)),
         deletes: pending.deletes.filter((id) => !doneDel.has(id)),
         wipeSessions: pending.wipeSessions && !snap.wipeSessions,
       });

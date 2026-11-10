@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { audioController } from "@/lib/audio/controller";
 import { ACHIEVEMENTS } from "@/lib/achievements";
+import { cloudAdapter } from "@/lib/cloud-sync";
 import { DARK_THEMES } from "@/lib/defaults";
 import { formatClock, getRemaining } from "@/lib/timer";
 import { appActions, getState, hydrate, onAppEvent, timerActions, useApp } from "@/state/app-store";
@@ -28,7 +29,7 @@ export function AppRuntime() {
   const baseTitle = useRef<string | null>(null);
 
   useEffect(() => {
-    hydrate();
+    hydrate(cloudAdapter);
   }, []);
 
   useEffect(() => {
