@@ -1,5 +1,8 @@
 # Dozi roadmap
 
+## Accounts & cloud sync
+- [ ] Sign in so study history, settings, subjects, progress and sounds are saved to the account and synced across devices
+
 ## Interactive study room upgrade
 - [ ] Clickable room objects: lamp, mug, window weather, plant, books + quote, clock, cat bed, laptop, food/water bowls, toy
 - [ ] Hover hints on clickable objects, keyboard access
