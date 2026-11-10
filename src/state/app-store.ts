@@ -207,7 +207,6 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
  */
 export function applySyncedSlices(raw: Partial<Record<Exclude<PersistedKey, "timer">, unknown>>) {
   const n = normalizePersisted(raw);
-  const themeChanged = n.settings.theme !== state.settings.theme;
   setState({
     settings: n.settings,
     sessions: n.sessions,
@@ -216,7 +215,6 @@ export function applySyncedSlices(raw: Partial<Record<Exclude<PersistedKey, "tim
     progress: n.progress,
     audio: n.audio,
   });
-  return { themeChanged };
 }
 
 /** Wipes everything back to a fresh guest state (used on sign-out). */
