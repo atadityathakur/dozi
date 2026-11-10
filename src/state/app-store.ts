@@ -144,11 +144,12 @@ function emit(e: AppEvent) {
 
 /* ---------------- hydration ---------------- */
 
-export function hydrate(adapter: PersistenceAdapter = localPersistence) {
-  persistence = adapter;
-  const loaded: Partial<Record<PersistedKey, unknown>> = {};
-  for (const key of PERSISTED) loaded[key] = adapter.load(key);
+export type PersistedSlices = Pick<AppState, PersistedKey>;
 
+/** Turns raw saved data (local or cloud) into valid, migrated slices. */
+export function normalizePersisted(loaded: Partial<Record<PersistedKey, unknown>>): Omit<PersistedSlices, "timer"> & {
+  timer: TimerState | null;
+} {
   const settingsRaw = (loaded.settings ?? {}) as Partial<Settings>;
   const outdated = loaded.settings != null && (settingsRaw.prefsVersion ?? 1) < PREFS_VERSION;
   const settings: Settings = {
@@ -167,12 +168,9 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
       : petFromCoat(settingsRaw.companionCoat);
   const audioRaw = (loaded.audio ?? {}) as Partial<AudioPrefs>;
   if (audioRaw.category && !SOUND_CATEGORIES.some((c) => c.id === audioRaw.category)) audioRaw.category = "lofi";
-  const timer = (loaded.timer as TimerState | null) ?? initialTimer(settings);
-
-  state = {
-    ...state,
+  return {
     settings,
-    timer,
+    timer: (loaded.timer as TimerState | null) ?? null,
     sessions: Array.isArray(loaded.sessions) ? (loaded.sessions as StudySession[]) : [],
     subjects: Array.isArray(loaded.subjects) && (loaded.subjects as Subject[]).length
       ? (loaded.subjects as Subject[])
@@ -180,6 +178,19 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
     study: { subjectId: null, task: "", ...((loaded.study as StudyContext | null) ?? {}) },
     progress: { ...DEFAULT_PROGRESS, ...((loaded.progress as Progress | null) ?? {}) },
     audio: { ...DEFAULT_AUDIO, ...audioRaw, layers: { ...DEFAULT_AUDIO.layers, ...(audioRaw.layers ?? {}) } },
+  };
+}
+
+export function hydrate(adapter: PersistenceAdapter = localPersistence) {
+  persistence = adapter;
+  const loaded: Partial<Record<PersistedKey, unknown>> = {};
+  for (const key of PERSISTED) loaded[key] = adapter.load(key);
+  const n = normalizePersisted(loaded);
+
+  state = {
+    ...state,
+    ...n,
+    timer: n.timer ?? initialTimer(n.settings),
     runtime: { ...state.runtime, lastInteraction: Date.now() },
     hydrated: true,
   };
@@ -188,6 +199,28 @@ export function hydrate(adapter: PersistenceAdapter = localPersistence) {
   // A phase that finished while the tab was closed is credited now.
   const now = Date.now();
   if (T.isComplete(state.timer, now)) completePhase(state.timer.endsAt ?? now, true);
+}
+
+/**
+ * Replaces the synced slices (everything except the running timer) with data
+ * coming from the account, e.g. after signing in. Saved through the adapter.
+ */
+export function applySyncedSlices(raw: Partial<Record<Exclude<PersistedKey, "timer">, unknown>>) {
+  const n = normalizePersisted(raw);
+  setState({
+    settings: n.settings,
+    sessions: n.sessions,
+    subjects: n.subjects,
+    study: n.study,
+    progress: n.progress,
+    audio: n.audio,
+  });
+}
+
+/** Wipes everything back to a fresh guest state (used on sign-out). */
+export function resetToFresh() {
+  const fresh = createInitialState();
+  setState({ ...fresh, hydrated: true, runtime: { ...fresh.runtime, lastInteraction: Date.now() } });
 }
 
 /* ---------------- timer actions ---------------- */
