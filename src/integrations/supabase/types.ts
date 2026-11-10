@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      study_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string
+          id: string
+          minutes: number
+          mode_id: string
+          started_at: string
+          subject_id: string | null
+          task: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at: string
+          id: string
+          minutes?: number
+          mode_id: string
+          started_at: string
+          subject_id?: string | null
+          task?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string
+          id?: string
+          minutes?: number
+          mode_id?: string
+          started_at?: string
+          subject_id?: string | null
+          task?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_app_state: {
+        Row: {
+          audio: Json | null
+          progress: Json | null
+          settings: Json | null
+          study: Json | null
+          subjects: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audio?: Json | null
+          progress?: Json | null
+          settings?: Json | null
+          study?: Json | null
+          subjects?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audio?: Json | null
+          progress?: Json | null
+          settings?: Json | null
+          study?: Json | null
+          subjects?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
